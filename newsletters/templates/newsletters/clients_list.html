@@ -1,0 +1,15 @@
+{% extends 'newsletters/base.html' %}
+
+{% block title %}Список получателей рассылки{% endblock %}
+
+{% block content %}
+{% include 'newsletters/includes/inc_header.html' %}
+<h2>Список получателей рассылки</h2>
+<ul class="list-group">
+    {% for client in clients %}
+        <li class="list-group-item">
+            <a href="{% url 'newsletters:client_detail' client.pk %}">{{ client.email }}</a> - {{ client.full_name }}
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
