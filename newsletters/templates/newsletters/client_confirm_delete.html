@@ -1,0 +1,14 @@
+{% extends 'newsletters/base.html' %}
+
+{% block title %}Удаление получателя рассылки{% endblock %}
+
+{% block content %}
+{% include 'newsletters/includes/inc_header.html' %}
+<h2>Удаление получателя рассылки</h2>
+<p>Вы действительно хотите удалить получателя с адресом {{ client.email }}?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    <a href="{% url 'newsletters:clients_list' %}" class="btn btn-primary">Отменить</a>
+</form>
+{% endblock %}
