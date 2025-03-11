@@ -1,0 +1,15 @@
+{% extends 'newsletters/base.html' %}
+
+{% block title %}Детали получателя рассылки{% endblock %}
+
+{% block content %}
+{% include 'newsletters/includes/inc_header.html' %}
+<h2 class="mb-3">Получатель рассылки</h2>
+<h4>Email: {{ client.email }}</h4>
+<p>ФИО: {{ client.full_name }}</p>
+<p>Комментарий: {{ client.comment }}</p>
+
+<a href="{% url 'newsletters:client_update' client.pk %}" class="btn btn-secondary">Редактировать</a>
+<a href="{% url 'newsletters:client_delete' client.pk %}" class="btn btn-danger">Удалить</a>
+<a href="{% url 'newsletters:clients_list' %}" class="btn btn-primary">Вернуться к списку</a>
+{% endblock %}
