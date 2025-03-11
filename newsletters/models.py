@@ -12,3 +12,15 @@ class NewsletterRecipient(models.Model):
     class Meta:
         verbose_name = "Получатель рассылки"
         verbose_name_plural = "Получатели рассылки"
+
+
+class Message(models.Model):
+    subject = models.CharField(max_length=300, verbose_name="Тема письма")
+    text = models.TextField(verbose_name="Текст письма")
+
+    def __str__(self):
+        return self.subject
+
+    class Meta:
+        verbose_name = "Сообщение"
+        verbose_name_plural = "Сообщения"
