@@ -2,8 +2,8 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
-from newsletters.forms import NewsletterRecipientForm
-from newsletters.models import NewsletterRecipient
+from newsletters.forms import NewsletterRecipientForm, MessageForm
+from newsletters.models import NewsletterRecipient, Message
 
 
 class NewsletterRecipientListView(ListView):
@@ -38,13 +38,40 @@ class NewsletterRecipientDeleteView(DeleteView):
     context_object_name = 'client'
     success_url = reverse_lazy('newsletters:clients_list')
 
-# class Message(models.Model):
-#     subject = models.CharField(max_length=300, verbose_name="Тема письма", help_text="")
-#     text = models.TextField()
-#     pass
-#
-#
-#
+
+class MessageListView(ListView):
+    model = Message
+    template_name = "newsletters/messages_list.html"
+    context_object_name = "messages"
+
+
+class MessageCreateView(CreateView):
+    model = Message
+    form_class = MessageForm
+    template_name = "newsletters/message_form.html"
+    success_url = reverse_lazy('newsletters:messages_list')
+
+
+class MessageUpdateView(UpdateView):
+    model = Message
+    form_class = MessageForm
+    template_name = "newsletters/message_form.html"
+    success_url = reverse_lazy('newsletters:messages_list')
+
+
+class MessageDetailView(DetailView):
+    model = Message
+    template_name = 'newsletters/message_detail.html'
+    context_object_name = 'message'
+
+
+class MessageDeleteView(DeleteView):
+    model = Message
+    template_name = 'newsletters/message_confirm_delete.html'
+    context_object_name = 'message'
+    success_url = reverse_lazy('newsletters:messages_list')
+
+
 # class Newsletter(models.Model):
 #     pass
 #
