@@ -1,0 +1,13 @@
+{% extends 'newsletters/base.html' %}
+
+{% block title %}Детали письма{% endblock %}
+
+{% block content %}
+{% include 'newsletters/includes/inc_header.html' %}
+<h2 class="mb-3">{{ message.subject }}</h2>
+<p>{{ message.text }}</p>
+
+<a href="{% url 'newsletters:message_update' message.pk %}" class="btn btn-secondary">Редактировать</a>
+<a href="{% url 'newsletters:message_delete' message.pk %}" class="btn btn-danger">Удалить</a>
+<a href="{% url 'newsletters:messages_list' %}" class="btn btn-primary">Вернуться к списку</a>
+{% endblock %}
