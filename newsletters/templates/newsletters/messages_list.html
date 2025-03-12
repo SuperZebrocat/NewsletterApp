@@ -1,0 +1,15 @@
+{% extends 'newsletters/base.html' %}
+
+{% block title %}Список писем{% endblock %}
+
+{% block content %}
+{% include 'newsletters/includes/inc_header.html' %}
+<h2>Список писем</h2>
+<ul class="list-group">
+    {% for message in messages %}
+        <li class="list-group-item">
+            <a href="{% url 'newsletters:message_detail' message.pk %}">{{ message.subject }}</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
