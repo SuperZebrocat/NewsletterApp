@@ -18,6 +18,10 @@ class NewsletterRecipientCreateView(CreateView):
     template_name = "newsletters/client_form.html"
     success_url = reverse_lazy('newsletters:clients_list')
 
+    def form_valid(self, form):
+        form.instance.owner = self.request.user  # Устанавливаем текущего пользователя как владельца
+        return super().form_valid(form)
+
 
 class NewsletterRecipientUpdateView(UpdateView):
     model = NewsletterRecipient
@@ -51,6 +55,10 @@ class MessageCreateView(CreateView):
     template_name = "newsletters/message_form.html"
     success_url = reverse_lazy('newsletters:messages_list')
 
+    def form_valid(self, form):
+        form.instance.owner = self.request.user  # Устанавливаем текущего пользователя как владельца
+        return super().form_valid(form)
+
 
 class MessageUpdateView(UpdateView):
     model = Message
@@ -77,6 +85,10 @@ class NewsletterCreateView(CreateView):
     form_class = NewsletterForm
     template_name = "newsletters/newsletter_form.html"
     success_url = reverse_lazy('newsletters:newsletters_list')
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user  # Устанавливаем текущего пользователя как владельца
+        return super().form_valid(form)
 
 
 class NewsletterListView(ListView):
