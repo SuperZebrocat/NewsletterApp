@@ -1,0 +1,17 @@
+{% extends 'newsletters/base.html' %}
+{% load users_tags %}
+
+{% block title %}Профиль пользователя {{ user.email }} {% endblock %}
+
+{% block content %}
+{% include 'newsletters/includes/inc_header.html' %}
+<h2 class="mb-3">Мой профиль</h2>
+<img src='{{ user.avatar.url }}' class="card-img-top img-placeholder mb-3" alt="..." style="width: 150px; height: auto;">
+<p>Email: {{ user.email }}</p>
+<p>Номер телефона: {{ user.phone_number | default:"не указан" }}</p>
+<p>Страна: {{ user.country | default:"не указана" }}</p>
+<a href="{% url 'users:profile_update' user.email %}" class="btn btn-primary">Редактировать профиль</a>
+<a href="#" class="btn btn-primary">На главную</a>
+
+{% endblock %}
+
