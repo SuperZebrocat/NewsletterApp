@@ -70,9 +70,11 @@ class NewsletterAttempting(models.Model):
     SUCCESSFUL = "successful"
     FAILED = "failed"
 
-    STATUS_CHOICES = [SUCCESSFUL, "УСПЕШНО", FAILED, "НЕ УСПЕШНО"]
+    STATUS_CHOICES = [(SUCCESSFUL, "УСПЕШНО"), (FAILED, "НЕ УСПЕШНО")]
 
-    date_time = models.DateTimeField(verbose_name="Дата и время попытки рассылки")
+    timestamp = models.DateTimeField(
+        auto_now_add=True, null=True, blank=True, verbose_name="Дата и время попытки рассылки"
+    )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Статус попытки рассылки")
     server_answer = models.TextField()
     newsletter = models.ForeignKey(
