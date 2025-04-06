@@ -1,15 +1,16 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django_countries.fields import CountryField
+from django.db import models
+from django.db.models import ImageField
 
 
 class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True, verbose_name="Email")
-    avatar = models.ImageField(upload_to="users/avatars/", verbose_name="Аватар", blank=True, null=True,
-                               help_text="Загрузите свой аватар")
-    phone_number = models.CharField(max_length=35, verbose_name="Телефон", blank=True, null=True, help_text="Укажите номер телефона")
-    country = CountryField(blank_label='выберите страну', blank=True, null=True, help_text="Выберите страну")
+    avatar = ImageField(
+        upload_to="avatars/", verbose_name="Аватар", blank=True, null=True, default="media/avatars/default_avatar.jpg"
+    )
+    phone_number = models.CharField(max_length=35, verbose_name="Телефон", blank=True, null=True)
+    country = models.CharField(max_length=150, verbose_name="Страна", blank=True, null=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
