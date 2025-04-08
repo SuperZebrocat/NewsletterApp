@@ -5,11 +5,14 @@
 {% block content %}
 {% include 'newsletters/includes/inc_header.html' %}
 <h2>Список получателей рассылки</h2>
-<ul class="list-group">
+<ul class="list-group mt-3">
     {% for client in clients %}
         <li class="list-group-item">
             <a href="{% url 'newsletters:client_detail' client.pk %}">{{ client.email }}</a> - {{ client.full_name }}
         </li>
     {% endfor %}
 </ul>
+
+<a href="{% url 'newsletters:client_create' %}" class="btn btn-primary mt-5">Новый получатель рассылки</a>
+
 {% endblock %}
