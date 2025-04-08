@@ -19,9 +19,6 @@ class CustomLoginView(LoginView):
     form_class = CustomAuthenticationForm
     template_name = "users/login.html"
 
-    def get_success_url(self):
-        return reverse_lazy("newsletters:clients_list")
-
 
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
