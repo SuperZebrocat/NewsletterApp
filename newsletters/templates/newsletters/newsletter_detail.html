@@ -1,0 +1,44 @@
+{% extends 'newsletters/base.html' %}
+
+{% block title %}Детали рассылки{% endblock %}
+
+{% block content %}
+{% include 'newsletters/includes/inc_header.html' %}
+
+{% if newsletter.status == "launched" %}
+<div class="alert alert-success d-none d-lg-block" role="alert">
+    <h4 class="alert-heading">Рассылка запущена</h4>
+</div>
+{% elif newsletter.status == "completed" %}
+<div class="alert d-none d-lg-block" role="alert" style="background-color: gray; color: white;">
+    <h4 class="alert-heading">Рассылка завершена</h4>
+</div>
+{% endif %}
+
+<h3 class="mb-3">Рассылка: {{ newsletter.title }}</h3>
+<h5>Тема:</h5>
+<p>{{ newsletter.message.subject }}</p>
+<h5>Текст:</h5>
+<p>{{ newsletter.message.text }}</p>
+<h5>Получатели рассылки:</h5>
+<ul class="list-group mt-3">
+    {% for client in newsletter.clients.all %}
+        <li class="list-group-item">
+            {{ client.email }}
+        </li>
+    {% endfor %}
+</ul>
+
+<div class="mb-5 mt-5">
+    <a href="{% url 'newsletters:newsletter_update' newsletter.pk %}" class="btn btn-secondary">Редактировать</a>
+    <a href="{% url 'newsletters:newsletter_delete' newsletter.pk %}" class="btn btn-danger">Удалить</a>
+    <a href="{% url 'newsletters:newsletters_list' %}" class="btn btn-primary">Вернуться к списку</a>
+</div >
+
+{% if newsletter.status == "created" %}
+<a href="{% url 'newsletters:newsletter_confirm' newsletter.pk %}" class="btn btn-success">Отправить рассылку</a>
+{% elif newsletter.status == "launched" %}
+<a href="#" class="btn btn-danger">Остановить рассылку</a>
+{% endif %}
+
+{% endblock %}
