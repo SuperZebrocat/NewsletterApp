@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.views import View
 from django.views.generic import TemplateView
 
-from newsletters.models import Newsletter, NewsletterAttempting
+from newsletters.models import Newsletter, NewsletterAttempting, NewsletterRecipient
 
 
 class StartNewsletterView(View):
@@ -116,3 +116,22 @@ class NewsletterStartFailed(TemplateView):
         server_response = last_attempt.server_response if last_attempt else "Нет данных о попытке рассылки."
         context = self.get_context_data(newsletter=newsletter, server_response=server_response)
         return self.render_to_response(context)
+
+
+class MainPageView(TemplateView):
+    template_name = "newsletters/main_page.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        # Получаем количество рассылок пользователя
+        newsletters_count = Newsletter.objects.filter(owner=user).count()
+        newsletters_launched_count = Newsletter.objects.filter(owner=user, status="launched").count()
+        # Получаем количество получателей всех рассылок пользователя
+        clients_count = NewsletterRecipient.objects.filter(owner=user).count()
+        # Добавляем данные в контекст
+        context["newsletters_count"] = newsletters_count
+        context["newsletters_launched_count"] = newsletters_launched_count
+        context["clients_count"] = clients_count
+
+        return context
