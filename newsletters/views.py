@@ -11,6 +11,9 @@ class NewsletterRecipientListView(ListView):
     template_name = "newsletters/clients_list.html"
     context_object_name = "clients"
 
+    def get_queryset(self):
+        return NewsletterRecipient.objects.filter(owner=self.request.user)
+
 
 class NewsletterRecipientCreateView(CreateView):
     model = NewsletterRecipient
@@ -35,6 +38,9 @@ class NewsletterRecipientDetailView(DetailView):
     template_name = 'newsletters/client_detail.html'
     context_object_name = 'client'
 
+    def get_queryset(self):
+        return NewsletterRecipient.objects.filter(owner=self.request.user)
+
 
 class NewsletterRecipientDeleteView(DeleteView):
     model = NewsletterRecipient
@@ -47,6 +53,9 @@ class MessageListView(ListView):
     model = Message
     template_name = "newsletters/messages_list.html"
     context_object_name = "messages"
+
+    def get_queryset(self):
+        return Message.objects.filter(owner=self.request.user)
 
 
 class MessageCreateView(CreateView):
@@ -72,6 +81,9 @@ class MessageDetailView(DetailView):
     template_name = 'newsletters/message_detail.html'
     context_object_name = 'message'
 
+    def get_queryset(self):
+        return Message.objects.filter(owner=self.request.user)
+
 
 class MessageDeleteView(DeleteView):
     model = Message
@@ -84,11 +96,18 @@ class NewsletterCreateView(CreateView):
     model = Newsletter
     form_class = NewsletterForm
     template_name = "newsletters/newsletter_form.html"
-    success_url = reverse_lazy('newsletters:newsletters_list')
 
     def form_valid(self, form):
         form.instance.owner = self.request.user  # Устанавливаем текущего пользователя как владельца
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('newsletters:newsletter_detail', kwargs={'pk': self.object.pk})
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  # Передаем текущего пользователя в форму
+        return kwargs
 
 
 class NewsletterListView(ListView):
@@ -96,18 +115,31 @@ class NewsletterListView(ListView):
     template_name = "newsletters/newsletters_list.html"
     context_object_name = "newsletters"
 
+    def get_queryset(self):
+        return Newsletter.objects.filter(owner=self.request.user)
+
 
 class NewsletterDetailView(DetailView):
     model = Newsletter
     template_name = 'newsletters/newsletter_detail.html'
     context_object_name = 'newsletter'
 
+    def get_queryset(self):
+        return Newsletter.objects.filter(owner=self.request.user)
+
 
 class NewsletterUpdateView(UpdateView):
     model = Newsletter
     form_class = NewsletterForm
     template_name = 'newsletters/newsletter_form.html'
-    success_url = reverse_lazy('newsletters:newsletters_list')
+
+    def get_success_url(self):
+        return reverse_lazy('newsletters:newsletter_detail', kwargs={'pk': self.object.pk})
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  # Передаем текущего пользователя в форму
+        return kwargs
 
 
 class NewsletterDeleteView(DeleteView):
