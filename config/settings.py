@@ -118,7 +118,7 @@ AUTHENTICATION_BACKENDS = [
 
 SITE_ID = 2
 
-# LOGIN_REDIRECT_URL = 'catalog:product_list'
-# LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'newsletters:main_page'
+LOGIN_URL = 'users:login'
 
 LOGOUT_REDIRECT_URL = 'users:login'
