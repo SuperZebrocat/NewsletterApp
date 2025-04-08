@@ -76,7 +76,7 @@ class NewsletterAttempting(models.Model):
         auto_now_add=True, null=True, blank=True, verbose_name="Дата и время попытки рассылки"
     )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Статус попытки рассылки")
-    server_answer = models.TextField()
+    server_response = models.TextField()
     newsletter = models.ForeignKey(
-        Newsletter, on_delete=models.CASCADE, related_name="newsletter", verbose_name="Рассылка"
+        Newsletter, on_delete=models.CASCADE, related_name="attempts", verbose_name="Рассылка"
     )
