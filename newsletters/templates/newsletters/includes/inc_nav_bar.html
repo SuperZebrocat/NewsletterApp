@@ -4,7 +4,7 @@
         <ul class="navbar-nav">
             {% if user.is_authenticated %}
             <li class="nav-item active">
-                <a class="nav-link" href="#">Главная</a>
+                <a class="nav-link" href="{% url 'newsletters:main_page' %}">Главная</a>
             </li>
 
             <li class="nav-item active">
@@ -20,6 +20,9 @@
 
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'users:profile_detail' user.email %}">Профиль пользователя</a>
+            </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Попытки рассылки</a>
             </li>
             <li class="nav-item">
                 <form method="post" action="{% url 'users:logout' %}" style="display: inline">
