@@ -4,7 +4,9 @@
 
 {% block content %}
 {% include 'newsletters/includes/inc_header.html' %}
-<h2 class="mb-3">{{ message.subject }}</h2>
+
+<h3 class="mb-3">Тема: {{ message.subject }}</h3>
+<p>Текст:</p>
 <p>{{ message.text }}</p>
 
 <a href="{% url 'newsletters:message_update' message.pk %}" class="btn btn-secondary">Редактировать</a>
