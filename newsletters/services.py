@@ -17,23 +17,23 @@ class StartNewsletterView(View):
         clients = newsletter.clients.all()
         subject = newsletter.message.subject
         text = newsletter.message.text
-        clients_email_list = [client.email for client in clients]
 
-        try:
-            send_mail(subject=subject, message=text, from_email=None, recipient_list=clients_email_list)
-            NewsletterAttempting.objects.create(
-                status="successful", newsletter=newsletter, server_response="Рассылка успешно отправлена"
-            )
-            newsletter.status = "launched"
-            newsletter.save()
-            return HttpResponseRedirect(reverse("newsletters:newsletter_success", args=[pk]))
-        except Exception as e:
-            NewsletterAttempting.objects.create(
-                newsletter=newsletter,
-                status="failed",
-                server_response=str(e) if str(e) else "Неизвестная ошибка",
-            )
-            return HttpResponseRedirect(reverse("newsletters:newsletter_failed", args=[pk]))
+        for client in clients:
+            try:
+                send_mail(subject=subject, message=text, from_email=None, recipient_list=[client.email])
+                NewsletterAttempting.objects.create(
+                    status="successful", newsletter=newsletter, server_response="Рассылка успешно отправлена"
+                )
+                newsletter.status = "launched"
+                newsletter.save()
+                return HttpResponseRedirect(reverse("newsletters:newsletter_success", args=[pk]))
+            except Exception as e:
+                NewsletterAttempting.objects.create(
+                    newsletter=newsletter,
+                    status="failed",
+                    server_response=str(e) if str(e) else "Неизвестная ошибка",
+                )
+                return HttpResponseRedirect(reverse("newsletters:newsletter_failed", args=[pk]))
 
     def get(self, request, pk):
         newsletter = get_object_or_404(Newsletter, id=pk)
@@ -49,7 +49,7 @@ class NewsletterConfirmStart(View):
         pk = kwargs.get("pk")
         newsletter = get_object_or_404(Newsletter, id=pk)
 
-        if newsletter.status == "created":
+        if newsletter.status == "created" or newsletter.status == "launched":
             if newsletter.finish_sending not in [None, ""]:
                 if newsletter.finish_sending >= timezone.now():
                     start_newsletter_view = StartNewsletterView.as_view()
@@ -66,13 +66,6 @@ class NewsletterConfirmStart(View):
             else:
                 messages.error(request, "Укажите дату окончания рассылки")
                 return HttpResponseRedirect(reverse("newsletters:newsletter_update", args=[pk]))
-        elif newsletter.status == "launched":
-            NewsletterAttempting.objects.create(
-                newsletter=newsletter,
-                status="failed",
-                server_response="Рассылка уже была отправлена. Вы не можете отправить её повторно.",
-            )
-            return HttpResponseRedirect(reverse("newsletters:newsletter_failed", args=[pk]))
         elif newsletter.status == "completed":
             NewsletterAttempting.objects.create(
                 newsletter=newsletter, status="failed", server_response="Срок рассылки истек."
@@ -82,11 +75,9 @@ class NewsletterConfirmStart(View):
     def get(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
         newsletter = get_object_or_404(Newsletter, id=pk)
-
         # Проверка прав доступа
         if newsletter.owner != request.user:
             return HttpResponse("У вас нет прав на отправку этой рассылки.", status=403)
-
         # Отображение шаблона с вопросом
         context = {
             "newsletter": newsletter,
@@ -133,5 +124,41 @@ class MainPageView(TemplateView):
         context["newsletters_count"] = newsletters_count
         context["newsletters_launched_count"] = newsletters_launched_count
         context["clients_count"] = clients_count
+
+        return context
+
+
+class NewslettersLogs(TemplateView):
+    template_name = "newsletters/newsletters_logs.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        newsletters = Newsletter.objects.filter(owner=user)
+        context["newsletters"] = newsletters
+
+        newsletters_data = []
+
+        for newsletter in newsletters:
+            newsletter_attempts = NewsletterAttempting.objects.filter(newsletter=newsletter)
+            if newsletter_attempts:
+                newsletter_attempts_count = newsletter_attempts.count()
+                successful_attempts_count = newsletter_attempts.filter(status="successful").count()
+                failed_attempts_count = newsletter_attempts.filter(status="failed").count()
+
+                newsletters_data.append({
+                    'newsletter': newsletter,
+                    'attempts_count': newsletter_attempts_count,
+                    'successful_attempts_count': successful_attempts_count,
+                    'failed_attempts_count': failed_attempts_count,
+                })
+
+        context["newsletters_data"] = newsletters_data
+
+        attempts = NewsletterAttempting.objects.filter(newsletter__owner=user)
+        all_successful_attempts_count = attempts.filter(status="successful").count()
+
+        context["all_successful_attempts_count"] = all_successful_attempts_count
 
         return context
