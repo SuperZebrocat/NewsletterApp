@@ -18,6 +18,9 @@ class NewsletterRecipient(models.Model):
     class Meta:
         verbose_name = "Получатель рассылки"
         verbose_name_plural = "Получатели рассылки"
+        permissions = [
+            ("can_view_newsletter_recipient", "Can view newsletter recipient"),
+        ]
 
 
 class Message(models.Model):
@@ -33,6 +36,9 @@ class Message(models.Model):
     class Meta:
         verbose_name = "Письмо"
         verbose_name_plural = "Письма"
+        permissions = [
+            ("can_view_newsletter_message", "Can view newsletter message"),
+        ]
 
 
 class Newsletter(models.Model):
@@ -65,6 +71,14 @@ class Newsletter(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Владелец", null=True, blank=True
     )
 
+    class Meta:
+        verbose_name = "Рассылка"
+        verbose_name_plural = "Рассылки"
+        permissions = [
+            ("can_view_newsletter", "Can view newsletter"),
+            ("can_change_status", "Can change status to completed"),
+        ]
+
 
 class NewsletterAttempting(models.Model):
     SUCCESSFUL = "successful"
@@ -80,3 +94,7 @@ class NewsletterAttempting(models.Model):
     newsletter = models.ForeignKey(
         Newsletter, on_delete=models.CASCADE, related_name="attempts", verbose_name="Рассылка"
     )
+
+    class Meta:
+        verbose_name = "Попытка рассылки"
+        verbose_name_plural = "Попытки рассылки"
