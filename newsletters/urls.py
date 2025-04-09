@@ -2,7 +2,7 @@ from django.urls import path
 
 from newsletters.apps import NewslettersConfig
 from newsletters.services import (NewsletterConfirmStart, NewsletterStartFailed, NewsletterStartSuccess,
-                                  StartNewsletterView, MainPageView)
+                                  StartNewsletterView, MainPageView, NewslettersLogs)
 from newsletters.views import (MessageCreateView, MessageDeleteView, MessageDetailView, MessageListView,
                                MessageUpdateView, NewsletterCreateView, NewsletterDeleteView, NewsletterDetailView,
                                NewsletterListView, NewsletterRecipientCreateView, NewsletterRecipientDeleteView,
@@ -32,5 +32,6 @@ urlpatterns = [
     path("newsletters/<int:pk>/start/success/", NewsletterStartSuccess.as_view(), name="newsletter_success"),
     path("newsletters/<int:pk>/start/failed/", NewsletterStartFailed.as_view(), name="newsletter_failed"),
     path("main_page/", MainPageView.as_view(), name="main_page"),
+    path("logs/", NewslettersLogs.as_view(), name="logs"),
 
 ]
