@@ -46,3 +46,9 @@ class UserSetNewPasswordForm(SetPasswordForm):
         super().__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({"class": "form-control", "autocomplete": "off"})
+
+
+class ManagerUserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['is_active']
