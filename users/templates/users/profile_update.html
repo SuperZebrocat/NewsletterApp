@@ -11,6 +11,12 @@
     {{ form.as_p }}
 
     <button type="submit" class="btn btn-primary">Сохранить</button>
-    <a href="{% url 'users:profile_detail' user.email %}" class="btn btn-primary">Отменить</a>
+
+    {% if is_manager %}
+        <a href="{% url 'users:users_list' %}" class="btn btn-primary">Отменить</a>
+    {% else %}
+        <a href="{% url 'users:profile_detail' user.email %}" class="btn btn-primary">Отменить</a>
+    {% endif %}
+
 </form>
 {% endblock %}
