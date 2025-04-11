@@ -12,7 +12,7 @@ from users.services import (
     UserPasswordResetCompleteView,
 )
 
-from users.views import RegisterView, CustomLoginView, UserDetailView, UserUpdateView
+from users.views import RegisterView, CustomLoginView, UserDetailView, UserUpdateView, UserListView
 
 app_name = UsersConfig.name
 
@@ -30,4 +30,5 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(next_page="users:login"), name="logout"),
     path("profile/<str:email>/", UserDetailView.as_view(), name="profile_detail"),
     path("profile/<str:email>/update/", UserUpdateView.as_view(), name="profile_update"),
+    path("users/", UserListView.as_view(), name="users_list"),
 ]
