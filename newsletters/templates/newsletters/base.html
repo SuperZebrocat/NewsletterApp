@@ -8,7 +8,14 @@
     <link rel="stylesheet" href="/static/bootstrap.min.css">
 </head>
 <body>
-{% include 'newsletters/includes/inc_nav_bar.html' %}
+
+{% block navbar %}
+    {% if is_manager %}
+        {% include 'users/includes/inc_manager_nav_bar.html' %}
+    {% else %}
+        {% include 'newsletters/includes/inc_nav_bar.html' %}
+    {% endif %}
+{% endblock %}
 
     <div class="container mt-5">
         {% block content %}{% endblock %}
