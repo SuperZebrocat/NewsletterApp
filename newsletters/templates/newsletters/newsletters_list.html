@@ -24,7 +24,7 @@
         {% for newsletter in newsletters %}
             <li class="list-group-item">
 
-                <a href="{% url 'newsletters:newsletter_detail' newsletter.pk %}">{{ newsletter.title }} -
+                <a href="{% url 'newsletters:newsletter_detail' newsletter.pk %}">ID {{ newsletter.id }} - {{ newsletter.title }} -
 
                 {% if newsletter.status == 'created' %}
                     <span class="text-primary"><strong>{{ newsletter.get_status_display }}</strong></span>
