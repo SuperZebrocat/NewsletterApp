@@ -4,11 +4,11 @@
 
 {% block content %}
 {% include 'newsletters/includes/inc_header.html' %}
-<h2>Главная страница</h2>
+<h2 class="mb-4">Главная страница</h2>
 
-<a class="mt-4 h5" href="{% url 'newsletters:newsletters_list' %}">Все рассылки - {{ newsletters_count }}</a>
-<h5 class="mt-3">Запущенных рассылок - {{ newsletters_launched_count }}</h5>
-<a class="h5" href="{% url 'newsletters:clients_list' %}">Получатели рассылок - {{ clients_count }}</a>
+<a class="mt-3 h5" href="{% url 'newsletters:newsletters_list' %}" style="color: blue;">Все рассылки: {{ newsletters_count }}</a>
+<h5 class="mt-3 mb-3">Запущенных рассылок: {{ newsletters_launched_count }}</h5>
+<a class="h5" href="{% url 'newsletters:clients_list' %}" style="color: blue;">Получатели рассылок - {{ clients_count }}</a>
 
 <div>
 <a href="{% url 'newsletters:newsletter_create' %}" class="btn btn-success mt-5">Новая рассылка</a>
