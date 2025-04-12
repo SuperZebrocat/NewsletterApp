@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -10,7 +12,16 @@ from django.views.generic import TemplateView
 from newsletters.models import Newsletter, NewsletterAttempting, NewsletterRecipient
 
 
-class StartNewsletterView(View):
+class StartNewsletterView(LoginRequiredMixin, View):
+    """Представление для отправки рассылки"""
+
+    def dispatch(self, request, *args, **kwargs):
+        pk = kwargs.get("pk")
+        newsletter = get_object_or_404(Newsletter, id=pk)
+        if newsletter.owner != request.user:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
         newsletter = get_object_or_404(Newsletter, id=pk)
@@ -36,14 +47,20 @@ class StartNewsletterView(View):
                 return HttpResponseRedirect(reverse("newsletters:newsletter_failed", args=[pk]))
 
     def get(self, request, pk):
-        newsletter = get_object_or_404(Newsletter, id=pk)
-        if newsletter.owner != request.user:
-            return HttpResponse("У вас нет прав на отправку этой рассылки.", status=403)
         return HttpResponse("Используйте POST для отправки рассылки.")
 
 
-class NewsletterConfirmStart(View):
+class NewsletterConfirmStart(LoginRequiredMixin, View):
+    """Представление для подтверждения отправки рассылки"""
+
     template_name = "newsletters/newsletter_confirm_start.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        pk = kwargs.get("pk")
+        newsletter = get_object_or_404(Newsletter, id=pk)
+        if newsletter.owner != request.user:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
@@ -75,42 +92,53 @@ class NewsletterConfirmStart(View):
     def get(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
         newsletter = get_object_or_404(Newsletter, id=pk)
-        # Проверка прав доступа
-        if newsletter.owner != request.user:
-            return HttpResponse("У вас нет прав на отправку этой рассылки.", status=403)
-        # Отображение шаблона с вопросом
         context = {
             "newsletter": newsletter,
         }
         return render(request, self.template_name, context)
 
 
-class NewsletterStartSuccess(TemplateView):
+class NewsletterStartSuccess(LoginRequiredMixin, TemplateView):
+    """Представление для страницы успешной рассылки"""
+
     template_name = "newsletters/newsletter_success.html"
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
         newsletter = get_object_or_404(Newsletter, id=pk)
+        if newsletter.owner != request.user:
+            raise PermissionDenied()
         last_attempt = newsletter.attempts.last()
         server_response = last_attempt.server_response if last_attempt else "Нет данных о попытке рассылки."
         context = self.get_context_data(newsletter=newsletter, server_response=server_response)
         return self.render_to_response(context)
 
 
-class NewsletterStartFailed(TemplateView):
+class NewsletterStartFailed(LoginRequiredMixin, TemplateView):
+    """Представление для страницы неуспешной рассылки"""
+
     template_name = "newsletters/newsletter_failed.html"
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
         newsletter = get_object_or_404(Newsletter, id=pk)
+        if newsletter.owner != request.user:
+            raise PermissionDenied()
         last_attempt = newsletter.attempts.last()
         server_response = last_attempt.server_response if last_attempt else "Нет данных о попытке рассылки."
         context = self.get_context_data(newsletter=newsletter, server_response=server_response)
         return self.render_to_response(context)
 
 
-class MainPageView(TemplateView):
+class MainPageView(LoginRequiredMixin, TemplateView):
+    """Представление для отображения главной страницы пользователю."""
+
     template_name = "newsletters/main_page.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_staff or request.user.groups.filter(name="managers").exists():
+            raise PermissionDenied("У вас нет прав доступа к этой странице.")
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -128,8 +156,15 @@ class MainPageView(TemplateView):
         return context
 
 
-class NewslettersLogs(TemplateView):
+class NewslettersLogs(LoginRequiredMixin, TemplateView):
+    """Представление для страницы логов рассылок пользователя."""
+
     template_name = "newsletters/newsletters_logs.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_staff or request.user.groups.filter(name="managers").exists():
+            raise PermissionDenied("У вас нет прав доступа к этой странице.")
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -147,12 +182,14 @@ class NewslettersLogs(TemplateView):
                 successful_attempts_count = newsletter_attempts.filter(status="successful").count()
                 failed_attempts_count = newsletter_attempts.filter(status="failed").count()
 
-                newsletters_data.append({
-                    'newsletter': newsletter,
-                    'attempts_count': newsletter_attempts_count,
-                    'successful_attempts_count': successful_attempts_count,
-                    'failed_attempts_count': failed_attempts_count,
-                })
+                newsletters_data.append(
+                    {
+                        "newsletter": newsletter,
+                        "attempts_count": newsletter_attempts_count,
+                        "successful_attempts_count": successful_attempts_count,
+                        "failed_attempts_count": failed_attempts_count,
+                    }
+                )
 
         context["newsletters_data"] = newsletters_data
 
