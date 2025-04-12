@@ -69,3 +69,18 @@ class NewsletterForm(forms.ModelForm):
             # Устанавливаем время на полночь
             finish_sending = datetime.combine(finish_sending.date(), time.min)
         return finish_sending
+
+
+class NewsletterManagerForm(forms.ModelForm):
+    class Meta:
+        model = Newsletter
+        fields = ["status"]
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        # Ограничиваем выбор статуса только на "завершена" и "не завершена"
+        self.fields["status"].choices = [
+            ('completed', 'Завершена'),
+            ('launched', 'Запущена'),
+        ]
