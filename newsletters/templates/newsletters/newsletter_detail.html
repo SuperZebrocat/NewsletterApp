@@ -28,17 +28,15 @@
         </li>
     {% endfor %}
 </ul>
-
-<div class="mb-5 mt-5">
-    <a href="{% url 'newsletters:newsletter_update' newsletter.pk %}" class="btn btn-secondary">Редактировать</a>
-    <a href="{% url 'newsletters:newsletter_delete' newsletter.pk %}" class="btn btn-danger">Удалить</a>
-    <a href="{% url 'newsletters:newsletters_list' %}" class="btn btn-primary">Вернуться к списку</a>
-</div >
-
-{% if newsletter.status == "created" %}
-<a href="{% url 'newsletters:newsletter_confirm' newsletter.pk %}" class="btn btn-success">Отправить рассылку</a>
-{% elif newsletter.status == "launched" %}
-<a href="#" class="btn btn-danger">Остановить рассылку</a>
+{% if not is_manager %}
+    <div class="mb-5 mt-5">
+        <a href="{% url 'newsletters:newsletter_update' newsletter.pk %}" class="btn btn-secondary">Редактировать</a>
+        <a href="{% url 'newsletters:newsletter_delete' newsletter.pk %}" class="btn btn-danger">Удалить</a>
+        <a href="{% url 'newsletters:newsletters_list' %}" class="btn btn-primary">Вернуться к списку</a>
+    </div >
+    <a href="{% url 'newsletters:newsletter_confirm' newsletter.pk %}" class="btn btn-success">Отправить рассылку</a>
+{% elif is_manager %}
+    <a href="{% url 'newsletters:newsletter_update' newsletter.pk %}" class="btn btn-danger mt-5">Остановить рассылку</a>
+    <a href="{% url 'newsletters:newsletters_list' %}" class="btn btn-primary mt-5">Вернуться к списку</a>
 {% endif %}
-
 {% endblock %}
