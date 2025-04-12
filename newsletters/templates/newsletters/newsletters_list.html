@@ -4,26 +4,39 @@
 
 {% block content %}
 {% include 'newsletters/includes/inc_header.html' %}
-<h2>Список рассылок</h2>
-<ul class="list-group mt-3">
-    {% for newsletter in newsletters %}
-        <li class="list-group-item">
+<h2>Список рассылок </h2>
 
-            <a href="{% url 'newsletters:newsletter_detail' newsletter.pk %}">{{ newsletter.title }} -
+{% if is_manager %}
+    {% for item in newsletters_data %}
+        <h5 class="mb-4 mt-4">Рассылки пользователя {{ item.user.email }}:</h5>
+        <ul class="list-group mt-3">
+            {% for newsletter in item.newsletters_list %}
+                <li class="list-group-item">
+                    <a href="{% url 'newsletters:newsletter_detail' newsletter.pk %}">{{ newsletter.title }}</a> - {{ newsletter.get_status_display }}
+                </li>
+            {% endfor %}
 
-            {% if newsletter.status == 'created' %}
-                <span class="text-primary"><strong>{{ newsletter.get_status_display }}</strong></span>
-            {% elif newsletter.status == 'launched' %}
-                <span class="text-success"><strong>{{ newsletter.get_status_display }}</strong></span>
-            {% elif newsletter.status == 'completed' %}
-                <span class="text-muted"><strong>{{ newsletter.get_status_display }}</strong></span>
-            {% endif %}
-                </a>
-
-        </li>
+        </ul>
     {% endfor %}
-</ul>
 
-<a href="{% url 'newsletters:newsletter_create' %}" class="btn btn-primary mt-5">Новая рассылка</a>
+{% else %}
+    <ul class="list-group mt-3">
+        {% for newsletter in newsletters %}
+            <li class="list-group-item">
 
+                <a href="{% url 'newsletters:newsletter_detail' newsletter.pk %}">{{ newsletter.title }} -
+
+                {% if newsletter.status == 'created' %}
+                    <span class="text-primary"><strong>{{ newsletter.get_status_display }}</strong></span>
+                {% elif newsletter.status == 'launched' %}
+                    <span class="text-success"><strong>{{ newsletter.get_status_display }}</strong></span>
+                {% elif newsletter.status == 'completed' %}
+                    <span class="text-muted"><strong>{{ newsletter.get_status_display }}</strong></span>
+                {% endif %}
+                    </a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'newsletters:newsletter_create' %}" class="btn btn-primary mt-5">Новая рассылка</a>
+{% endif %}
 {% endblock %}
