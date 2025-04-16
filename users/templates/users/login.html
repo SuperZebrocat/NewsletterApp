@@ -6,10 +6,12 @@
 
 {% include 'users/includes/inc_login_form.html' %}
 
-<div class="container mt-4" style="margin: 0; padding: 0;">
-    <a href="{% url 'users:register' %}" class="btn btn-primary">Регистрация</a>
-</div>
+    <div class="container mt-2 d-flex justify-content-center align-items-center" style="margin: 0; padding: 0;">
+        <a href="{% url 'users:register' %}" class="btn btn-primary">Регистрация</a>
+    </div>
 
-<a href="{% url 'users:password_reset' %}" class="mt-4 d-block">Восстановить пароль</a>
+    <div class="container mt-2 d-flex justify-content-center align-items-center" style="margin: 0; padding: 0;">
+        <a href="{% url 'users:password_reset' %}" class="mt-2 d-block">Восстановить пароль</a>
+    </div>
 
 {% endblock %}
