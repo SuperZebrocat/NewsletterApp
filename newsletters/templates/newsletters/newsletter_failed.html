@@ -1,0 +1,14 @@
+{% extends 'newsletters/base.html' %}
+
+{% block title %}Неуспешная рассылка{% endblock %}
+
+{% block content %}
+{% include 'newsletters/includes/inc_header.html' %}
+
+<div class="alert alert-danger d-none d-lg-block mb-4" role="alert">
+    <h4 class="alert-heading">{{ server_response }}</h4>
+</div>
+<a href="{% url 'newsletters:newsletters_list' %}" class="btn btn-primary">Список рассылок</a>
+<a href="{% url 'newsletters:newsletters_list' %}" class="btn btn-primary">На главную</a>
+
+{% endblock %}

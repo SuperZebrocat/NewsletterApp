@@ -1,0 +1,30 @@
+{% extends 'newsletters/base.html' %}
+{% load users_tags %}
+
+{% block title %}Список пользователей приложения{% endblock %}
+
+{% block content %}
+{% include 'newsletters/includes/inc_header.html' %}
+
+<h2 class="mb-5">Пользователи</h2>
+
+<ul class="list-group mt-3">
+    {% for user in users %}
+        <li class="list-group-item">
+
+            <a href="{% url 'users:profile_update' user.email %}">{{ user.email }} -
+
+            {% if user.is_active == True %}
+                <span class="text-success"><strong>Активный пользователь</strong></span>
+            {% elif user.is_active == False %}
+                <span class="text-muted"><strong>Заблокированный пользователь</strong></span>
+
+            {% endif %}
+                </a>
+
+        </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
+

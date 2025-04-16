@@ -1,0 +1,43 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'newsletters:main_page' %}">Главная</a>
+            </li>
+
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'newsletters:newsletters_list' %}">Рассылки</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'newsletters:clients_list' %}">Получатели рассылки</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'newsletters:messages_list' %}">Письма</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:profile_detail' user.email %}">Профиль пользователя</a>
+            </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'newsletters:logs' %}">Логи рассылок</a>
+            </li>
+            <li class="nav-item">
+                <form method="post" action="{% url 'users:logout' %}" style="display: inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link nav-link">Выйти</button>
+                </form>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:login' %}">Войти</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:register' %}">Регистрация</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

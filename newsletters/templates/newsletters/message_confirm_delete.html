@@ -1,0 +1,14 @@
+{% extends 'newsletters/base.html' %}
+
+{% block title %}Удаление письма{% endblock %}
+
+{% block content %}
+{% include 'newsletters/includes/inc_header.html' %}
+<h2>Удаление письма "{{ message.subject }}"</h2>
+<p>Подтверждение удаления письма</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    <a href="{% url 'newsletters:messages_list' %}" class="btn btn-primary">Отменить</a>
+</form>
+{% endblock %}

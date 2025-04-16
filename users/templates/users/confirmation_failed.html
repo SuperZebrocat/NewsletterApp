@@ -1,0 +1,13 @@
+{% extends 'newsletters/base.html' %}
+
+{% block title %}Завершение регистрации{% endblock %}
+
+{% block content %}
+
+<div class="alert alert-danger d-none d-lg-block" role="alert">
+    <h4 class="alert-heading">{{ message }}</h4>
+</div>
+
+{% include 'users/includes/inc_login_form.html' %}
+
+{% endblock %}

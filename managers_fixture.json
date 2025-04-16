@@ -1,0 +1,24 @@
+[
+{
+    "model": "users.user",
+    "pk": 30,
+    "fields": {
+        "password": "pbkdf2_sha256$870000$cgCbeZvvrTQffpfp3dMCgj$zxVcy78+ZhyNgyjABY3AMi+HEglI8te6foD6suvICVM=",
+        "last_login": "2025-04-16T07:23:00.330Z",
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-04-09T20:43:01Z",
+        "email": "manager@email.com",
+        "avatar": "media/avatars/default_avatar.jpg",
+        "phone_number": null,
+        "country": null,
+        "groups": [
+            1
+        ],
+        "user_permissions": []
+    }
+}
+]

@@ -1,0 +1,34 @@
+{% extends 'newsletters/base.html' %}
+
+{% block title %}Список получателей рассылки{% endblock %}
+
+{% block content %}
+{% include 'newsletters/includes/inc_header.html' %}
+<h2 class="mb-5">Список получателей рассылки</h2>
+
+{% if is_manager %}
+{% for item in clients_data %}
+    <h5 class="mb-4 mt-4">Получатели рассылки пользователя {{ item.user.email }}:</h5>
+    <ul class="list-group mt-3">
+        {% for client in item.clients_list %}
+            <li class="list-group-item">
+                <a href="{% url 'newsletters:client_detail' client.pk %}">{{ client.email }}</a>
+            </li>
+        {% endfor %}
+
+    </ul>
+{% endfor %}
+
+{% else %}
+<ul class="list-group mt-3">
+    {% for client in clients %}
+        <li class="list-group-item">
+            <a href="{% url 'newsletters:client_detail' client.pk %}">{{ client.email }}</a> - {{ client.full_name }}
+        </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'newsletters:client_create' %}" class="btn btn-primary mt-5">Новый получатель рассылки</a>
+{% endif %}
+
+{% endblock %}

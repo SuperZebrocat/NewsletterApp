@@ -1,0 +1,31 @@
+{% extends 'newsletters/base.html' %}
+
+{% block title %}Список писем{% endblock %}
+
+{% block content %}
+{% include 'newsletters/includes/inc_header.html' %}
+<h2 class="mb-5">Список писем</h2>
+
+{% if is_manager %}
+    {% for item in messages_data %}
+        <h5 class="mb-4 mt-4">Письма пользователя {{ item.user.email }}:</h5>
+        <ul class="list-group mt-3">
+            {% for message in item.messages_list %}
+                <li class="list-group-item">
+                    <a href="{% url 'newsletters:message_detail' message.pk %}">{{ message.subject }}</a>
+                </li>
+            {% endfor %}
+
+        </ul>
+    {% endfor %}
+{% else %}
+    <ul class="list-group">
+        {% for message in messages %}
+            <li class="list-group-item">
+                <a href="{% url 'newsletters:message_detail' message.pk %}">{{ message.subject }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'newsletters:message_create' %}" class="btn btn-primary mt-5">Новое письмо</a>
+{% endif %}
+{% endblock %}

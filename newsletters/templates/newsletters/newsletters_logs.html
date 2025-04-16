@@ -1,0 +1,21 @@
+{% extends 'newsletters/base.html' %}
+
+{% block title %}Отчет о рассылках{% endblock %}
+
+{% block content %}
+{% include 'newsletters/includes/inc_header.html' %}
+<h2 class="mb-4">Логи рассылок</h2>
+
+{% for data in newsletters_data %}
+    {% if data.attempts_count > 0 %}
+    <a class="h5" href="{% url 'newsletters:newsletter_detail' data.newsletter.pk %}" style="display: block; margin-top: 10px; color: blue;">Рассылка: {{ data.newsletter.title }}</a>
+    <p style="margin: 0;">Успешно отправлено {{ data.successful_attempts_count }} сообщений из {{ data.attempts_count }}</p>
+    <p style="margin: 0;">Неуспешно отправлено {{ data.failed_attempts_count }} сообщений из {{ data.attempts_count }}</p>
+    {% endif %}
+{% endfor %}
+
+<h5 class="mt-4">Всего успешно отправлено {{ all_successful_attempts_count }} сообщений</h5>
+
+<a href="{% url 'newsletters:main_page' %}" class="btn btn-primary mt-4">На главную</a>
+
+{% endblock %}

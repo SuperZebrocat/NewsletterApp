@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Управление рассылками{% endblock %}</title>
+    <!-- Подключение Bootstrap CSS -->
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+</head>
+<body>
+
+{% block navbar %}
+    {% if is_manager %}
+        {% include 'users/includes/inc_manager_nav_bar.html' %}
+    {% else %}
+        {% include 'newsletters/includes/inc_nav_bar.html' %}
+    {% endif %}
+{% endblock %}
+
+    <div class="container mt-5">
+        {% block content %}{% endblock %}
+    </div>
+
+<script src="/static/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
