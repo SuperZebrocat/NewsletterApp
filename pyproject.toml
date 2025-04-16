@@ -7,6 +7,16 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
+django = "^5.1.6"
+django-countries = "^7.6.1"
+python-dotenv = "^1.0.1"
+psycopg2-binary = "^2.9.10"
+pillow = "^11.1.0"
+black = "^25.1.0"
+isort = "^6.0.1"
+ipython = "^9.1.0"
+redis = "^5.2.1"
+django-redis = "^5.4.0"
 
 
 [tool.poetry.group.lint.dependencies]
