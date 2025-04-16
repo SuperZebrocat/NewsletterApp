@@ -6,7 +6,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
 
 from newsletters.models import Newsletter, NewsletterAttempting, NewsletterRecipient
@@ -130,6 +132,7 @@ class NewsletterStartFailed(LoginRequiredMixin, TemplateView):
         return self.render_to_response(context)
 
 
+@method_decorator(cache_page(60), name='dispatch')
 class MainPageView(LoginRequiredMixin, TemplateView):
     """Представление для отображения главной страницы пользователю."""
 
@@ -156,6 +159,7 @@ class MainPageView(LoginRequiredMixin, TemplateView):
         return context
 
 
+@method_decorator(cache_page(60), name='dispatch')
 class NewslettersLogs(LoginRequiredMixin, TemplateView):
     """Представление для страницы логов рассылок пользователя."""
 
