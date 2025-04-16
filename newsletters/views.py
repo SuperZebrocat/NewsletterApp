@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
@@ -8,9 +9,13 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from newsletters.forms import MessageForm, NewsletterForm, NewsletterManagerForm, NewsletterRecipientForm
 from newsletters.models import Message, Newsletter, NewsletterRecipient
 
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+
 User = get_user_model()
 
 
+@method_decorator(cache_page(60), name='dispatch')
 class NewsletterRecipientListView(LoginRequiredMixin, ListView):  # список владельцам свои, менеджерам - всех
     model = NewsletterRecipient
     template_name = "newsletters/clients_list.html"
@@ -50,7 +55,6 @@ class NewsletterRecipientListView(LoginRequiredMixin, ListView):  # список
 
 class NewsletterRecipientCreateView(LoginRequiredMixin, CreateView):  # создание всем зарег, кроме менеджеров
     """Представление для создания клиента - получателя рассылки."""
-
     model = NewsletterRecipient
     form_class = NewsletterRecipientForm
     template_name = "newsletters/client_form.html"
@@ -82,6 +86,7 @@ class NewsletterRecipientUpdateView(LoginRequiredMixin, UpdateView):  # реда
         return super().dispatch(request, *args, **kwargs)
 
 
+@method_decorator(cache_page(60), name='dispatch')
 class NewsletterRecipientDetailView(LoginRequiredMixin, DetailView):  # владельцам свои, менеджерам - всех
     """Представление для просмотра деталей клиента - получателя рассылки"""
 
@@ -94,7 +99,7 @@ class NewsletterRecipientDetailView(LoginRequiredMixin, DetailView):  # влад
             return NewsletterRecipient.objects.all()
         return NewsletterRecipient.objects.filter(owner=self.request.user)
 
-    def dispatch(self, request, *args, **kwargs):  # редактировать профиль может только сам пользователь
+    def dispatch(self, request, *args, **kwargs):
         client = self.get_object()
         if not (request.user.groups.filter(name="managers").exists() or client.owner == self.request.user):
             raise PermissionDenied("У вас недостаточно прав для просмотра объекта")
@@ -116,6 +121,7 @@ class NewsletterRecipientDeleteView(LoginRequiredMixin, DeleteView):  # удал
         return super().dispatch(request, *args, **kwargs)
 
 
+@method_decorator(cache_page(60), name='dispatch')
 class MessageListView(LoginRequiredMixin, ListView):
     """Представление для списка писем пользователя"""
 
@@ -152,6 +158,7 @@ class MessageListView(LoginRequiredMixin, ListView):
             return context
 
 
+@method_decorator(cache_page(60), name='dispatch')
 class MessageDetailView(LoginRequiredMixin, DetailView):
     """Представление для деталей письма пользователя"""
 
@@ -256,9 +263,19 @@ class NewsletterListView(LoginRequiredMixin, ListView):
             raise PermissionDenied()
 
     def get_queryset(self):
-        if self.request.user.groups.filter(name="managers").exists():
-            return Newsletter.objects.all()
-        return Newsletter.objects.filter(owner=self.request.user)
+        user = self.request.user
+        if user.groups.filter(name="managers").exists():
+            queryset = cache.get("managers_newsletter")
+            if not queryset:
+                queryset = super().get_queryset()
+                cache.set("managers_newsletter", queryset, 60)
+                return queryset
+        else:
+            queryset = cache.get("owners_newsletter")
+            if not queryset:
+                queryset = super().get_queryset().filter(owner=user)
+                cache.set("owners_newsletter", queryset, 60)
+                return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         if self.request.user.groups.filter(name="managers").exists():
@@ -279,6 +296,7 @@ class NewsletterListView(LoginRequiredMixin, ListView):
             return context
 
 
+@method_decorator(cache_page(60), name='dispatch')
 class NewsletterDetailView(LoginRequiredMixin, DetailView):
     model = Newsletter
     template_name = "newsletters/newsletter_detail.html"
